@@ -8,7 +8,6 @@
 # V4 Version        12.7.2026   Steuerung  mit IO-Extender erweitert
 # - Basis Steuermodul erstellt und Hauptmodul für 3 Steuerungen erstellt
 # =====================================
-
 # Init Konstanten
 # =========================
 debugRamp = 0
@@ -25,8 +24,8 @@ uK2OutputPin = AnalogPin.P4
 uK3OutputPin = AnalogPin.P10
 
 # GroundPin für pwm wird erst nach initialisierung des microbits eingeschaltet
-gndOutPin = DigitalPin.P11
-pins.digital_write_pin(gndOutPin, 0)
+# gndOutPin = DigitalPin.P11
+# pins.digital_write_pin(gndOutPin, 0)
 
 pins.analog_write_pin(uK1OutputPin, 100)
 pins.analog_write_pin(uK2OutputPin, 0)

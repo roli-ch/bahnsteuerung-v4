@@ -20,10 +20,9 @@ let uK3InputPin = AnalogPin.P2
 let uK1OutputPin = AnalogPin.P3
 let uK2OutputPin = AnalogPin.P4
 let uK3OutputPin = AnalogPin.P10
-
 //  GroundPin für pwm wird erst nach initialisierung des microbits eingeschaltet
-let gndOutPin = DigitalPin.P11
-pins.digitalWritePin(gndOutPin, 0)
+//  gndOutPin = DigitalPin.P11
+//  pins.digital_write_pin(gndOutPin, 0)
 pins.analogWritePin(uK1OutputPin, 100)
 pins.analogWritePin(uK2OutputPin, 0)
 pins.analogWritePin(uK3OutputPin, 0)
