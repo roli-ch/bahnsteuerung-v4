@@ -226,6 +226,10 @@ pause(2000)
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
     console.log("============")
     console.log("Button A")
+    MCP23017.WritePin(addr, REG_MCP.RegAddr_B, 2, 0)
+    pause(1000)
+    let bitwert = MCP23017.readRegister(addr,REG_MCP.RegAddr_B)
+    console.log("addr "+addr+" reg "+reg+" bitwert: "+bitwert)
     showInfo()
 })
 input.onButtonPressed(Button.B, function on_button_pressed_b() { 
@@ -691,6 +695,6 @@ basic.forever(function on_forever() {
         }
     }
     */
-    basic.pause(100)
+    basic.pause(1000)
 })
 // marke
