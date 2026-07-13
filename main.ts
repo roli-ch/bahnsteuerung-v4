@@ -7,6 +7,7 @@
 //  V3 Version        23.6.2026
 //  V4 Version        12.7.2026   Steuerung  mit IO-Extender erweitert
 //  - Basis Steuermodul erstellt und Hauptmodul für 3 Steuerungen erstellt
+
 //  =====================================
 //  Init Konstanten
 //  =========================
@@ -72,6 +73,7 @@ let uBoard = 0
 let uBoardRoh = 0
 let remChanged = 0
 let kreisNr = 0
+
 //  Kreis 1
 // ------------
 let einK1 = 0
@@ -82,6 +84,7 @@ let einK1changed = 0
 let uSollK1 = 0
 //  0-100% aktueller Sollwert (Potentiometer)
 let uIstK1 = 0
+
 //  Kreis 2
 // ------------
 let einK2 = 0
@@ -92,6 +95,7 @@ let einK2changed = 0
 let uSollK2 = 0
 //  0-100% aktueller Sollwert (Potentiometer)
 let uIstK2 = 0
+
 //  Kreis 3
 // ------------
 let einK3 = 0
@@ -131,24 +135,20 @@ let sendRequest = 0
 //  KreisNr
 let remCtrl = 0
 // pins.analog_set_period(DigitalPin.P9, 1000)     # 1000 us; wenn DigitalPin -> kein Effect
+
 console.log(" Bahnsteuerung Init")
 showInfo()
 console.log(" vvvvvvvvvvvvvvvvvvvvv")
 pause(2000)
+
 //  Buttons
 //  =========================
-input.onLogoEvent(TouchButtonEvent.Pressed, function on_logo_pressed() {
-    
-})
-// sendRequest = 1
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
-    
     console.log("============")
     console.log("Button A")
     showInfo()
 })
-input.onButtonPressed(Button.B, function on_button_pressed_b() {
-    
+input.onButtonPressed(Button.B, function on_button_pressed_b() { 
     //  stop Kreis 1-3
     console.log("============")
     console.log("Botton B")
@@ -159,7 +159,6 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
     einK3 = 0
 })
 input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
-    
     //  Remote Control Ein/Aus
     console.log("============")
     console.log("AB: Freigabe Remote Control")
@@ -168,7 +167,6 @@ input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
     } else {
         remCtrl = 1
     }
-    
     console.log("Remote Control = " + remCtrl)
     sendRequest = 1
     sendData()
@@ -177,10 +175,11 @@ input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
     sendRequest = 3
     sendData()
 })
+
 input.onPinPressed(TouchPin.P0, function on_pin_pressed_p0() {
     console.log("P0")
-    
 })
+
 //  Funk
 //  ===================================
 //  Daten senden
@@ -196,7 +195,6 @@ function sendData() {
         sendRequest = 0
         console.log("K1 Daten gesendet")
     }
-    
     if (sendRequest == 2) {
         //  Senden
         radio.sendNumber(2)
@@ -206,7 +204,6 @@ function sendData() {
         sendRequest = 0
         console.log("K2 Daten gesendet")
     }
-    
     if (sendRequest == 3) {
         //  Senden
         radio.sendNumber(3)
@@ -216,7 +213,6 @@ function sendData() {
         sendRequest = 0
         console.log("K3 Daten gesendet")
     }
-    
 }
 
 //  Daten Empfangen
@@ -231,10 +227,6 @@ radio.onReceivedString(function on_received_string(receivedString: string) {
 })
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
     let idx: number;
-    
-    
-    
-    
     console.log("daten empfangen: " + name + " = " + value + "; remCtrl: " + remCtrl)
     if (remCtrl) {
         //  Kreis 1
@@ -247,7 +239,6 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         } else if (name == "speedK1") {
             uSollK1 = value
         }
-        
         //  Kreis 2
         idx = 1
         if (name == "einK2") {
@@ -258,7 +249,6 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         } else if (name == "speedK2") {
             uSollK2 = value
         }
-        
         //  Kreis 3
         idx = 2
         if (name == "einK3") {
@@ -269,10 +259,9 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         } else if (name == "speedK3") {
             uSollK3 = value
         }
-        
     }
-    
 })
+
 //  Funktionen
 //  ===================================
 //  myMath
@@ -296,12 +285,10 @@ function showData() {
         serial.writeValue(" rTime (min)", rTime / 60)
         serial.writeValue("uBoard", uBoard)
     }
-    
 }
 
 // serial.write_value("UOut", uOut)
 function showInfo() {
-    
     console.log("======================")
     console.log("Show Info")
     console.log("-----------------")
@@ -341,7 +328,6 @@ function uRampOnOff(up: boolean, uSoll: number, uIst: number, uOutputPin: number
             uIst = uSoll
             console.log("Spg Rampe ein: uSoll= " + round(uSoll, 1) + "; uIst= " + round(uIst, 1))
         }
-        
     } else {
         console.log("Spg Rampe ausschalten: uSoll= " + round(uSoll, 1) + "; uIst= " + round(uIst, 1))
         while (uIst - dU > uMin) {
@@ -353,7 +339,6 @@ function uRampOnOff(up: boolean, uSoll: number, uIst: number, uOutputPin: number
         uIst = 0
         console.log("Spg Rampe aus: uSoll= " + round(uSoll, 1) + "; uIst= " + round(uIst, 1))
     }
-    
     return uIst
 }
 
@@ -378,7 +363,6 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             pins.digitalWritePin(vorOutputPin, vor)
             uIst = 0
         }
-        
         return uIst
     }
     
@@ -388,7 +372,6 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
     if (debugSteu) {
         console.log("**** kreisSteuerung: ein:" + ein + "; changeEin:" + einChanged)
     }
-    
     if (pins.digitalReadPin(eaInputPin)) {
         if (debugSteu) {
             console.log("------------------------------------")
@@ -408,23 +391,20 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             sendRequest = kreisNr
             einChanged = 1
         }
-        
         if (debugSteu) {
             console.log("**Kreis" + kreisNr + " ein:" + ein)
         }
-        
     } else {
         einChanged = 0
     }
-    
     /** 
     if einK:
         if stop:
             print("Reset stop")
             stop = 0
             #sendRequest = kreisNr
+     */
     
- */
     //  ------------------------------
     //  Check Richtungswechsel
     if (pins.digitalReadPin(vrInputPin)) {
@@ -432,7 +412,6 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             console.log("------------------------------------")
             console.log("Check Richtungswechsel: vor= " + vor + "; vorChanged= " + vorChanged)
         }
-        
         // vorK, vorChanged = toggleEA(vor, vorChange)
         if (!vorChanged) {
             if (vor) {
@@ -442,26 +421,21 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
                 vor = 1
                 console.log("Kreis" + kreisNr + " Vor; uIst:" + round(uIst, 1))
             }
-            
             console.log("Richtungswechsel lokal")
             uIst = richtungswechsel(uIst)
             vorChanged = 1
         }
-        
         if (debugSteu) {
             console.log("Check Richtungswechsel: vor= " + vor + "; vorChanged= " + vorChanged)
             console.log("**Kreis" + kreisNr + " vor:" + vor)
         }
-        
     } else {
         if (remCtrl) {
             if (vorChanged) {
                 console.log("Richtungswechsel remote")
                 uIst = richtungswechsel(uIst)
             }
-            
         }
-        
         vorChanged = 0
     }
     
@@ -471,7 +445,6 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
         if (ein) {
             uIst = uSoll
         }
-        
     } else {
         uSollPoti = pins.analogReadPin(uInputPin) / uPwmFactor
         diff_u = Math.abs(uSoll - uSollPoti)
@@ -488,10 +461,8 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
                 console.log("***time: " + ("" + rTime / 1000) + " s")
                 console.log("Kreis " + kreisNr + " uIst:  " + round(uIst, 1))
             }
-            
             sendRequest = kreisNr
         }
-        
     }
     
     // pause(1000)
@@ -507,13 +478,11 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
         if (uIst < 1) {
             uIst = uRampOnOff(true, uSoll, uIst, uOutputPin)
         }
-        
         pins.analogWritePin(uOutputPin, uIst * uPwmFactor)
     } else if (uIst > 1) {
         uIst = uRampOnOff(false, uSoll, uIst, uOutputPin)
         pins.analogWritePin(uOutputPin, uIst * uPwmFactor)
     }
-    
     // pins.analog_write_pin(uOutputPin, 0)
     // test
     // pins.analog_write_pin(uOutputPin, 100 * uPwmFactor)
@@ -524,14 +493,12 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             changed = 1
         remChanged = 0
         #print("kreisSteuerung: eaNeu: "+eaNeu)
-    
- */
+    */
     //  ---------------------
     //  Rückgabewerte an main
     if (debugSteu) {
         console.log("** kreisSteuerung Return: ein:" + ein + "; einChanged:" + einChanged)
     }
-    
     //    einK1,  einK1changed, vorK1, vorK1changed, uSollK1, uIstK1
     return [ein, einChanged, vor, vorChanged, uSoll, uIst]
 }
@@ -539,11 +506,6 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
 //  Main Loop
 //  =====================================
 basic.forever(function on_forever() {
-    
-    
-    
-    
-    loopNr += 1
     loopTime = input.runningTime() - rTime
     rTime = input.runningTime()
     //  Kreis Steuerung
@@ -552,31 +514,30 @@ basic.forever(function on_forever() {
     if (debugSteu) {
         console.log("call kreisSteuerung: einK1: " + einK1)
     }
-    
-    let ___tempvar9 = kreisSteuerung(kreisNr, eaK1InputPin, einK1, einK1changed, vrK1InputPin, vorK1, vorK1changed, vorK1OutputPin, uK1InputPin, uSollK1, uIstK1, uK1OutputPin, sendRequest)
-    einK1 = ___tempvar9[0]
-    einK1changed = ___tempvar9[1]
-    vorK1 = ___tempvar9[2]
-    vorK1changed = ___tempvar9[3]
-    uSollK1 = ___tempvar9[4]
-    uIstK1 = ___tempvar9[5]
+    let kreis1res = kreisSteuerung(kreisNr, eaK1InputPin, einK1, einK1changed, vrK1InputPin, vorK1, vorK1changed, vorK1OutputPin, uK1InputPin, uSollK1, uIstK1, uK1OutputPin, sendRequest)
+    einK1 = kreis1res[0]
+    einK1changed = kreis1res[1]
+    vorK1 = kreis1res[2]
+    vorK1changed = kreis1res[3]
+    uSollK1 = kreis1res[4]
+    uIstK1 = kreis1res[5]
     //                                                                            kreisNr, eaInputPin,  ein, einChanged,     vrInputPin, vor,      vorChanged, vorOutputPin,    uInputPin,   uSoll,   uIst, uOutputPin,     sendRequest
     kreisNr = 2
-    let ___tempvar10 = kreisSteuerung(kreisNr, eaK2InputPin, einK2, einK2changed, vrK2InputPin, vorK2, vorK2changed, vorK2OutputPin, uK2InputPin, uSollK2, uIstK2, uK2OutputPin, sendRequest)
-    einK2 = ___tempvar10[0]
-    einK2changed = ___tempvar10[1]
-    vorK2 = ___tempvar10[2]
-    vorK2changed = ___tempvar10[3]
-    uSollK2 = ___tempvar10[4]
-    uIstK2 = ___tempvar10[5]
+    let kreis2res = kreisSteuerung(kreisNr, eaK2InputPin, einK2, einK2changed, vrK2InputPin, vorK2, vorK2changed, vorK2OutputPin, uK2InputPin, uSollK2, uIstK2, uK2OutputPin, sendRequest)
+    einK2 = kreis2res[0]
+    einK2changed = kreis2res[1]
+    vorK2 = kreis2res[2]
+    vorK2changed = kreis2res[3]
+    uSollK2 = kreis2res[4]
+    uIstK2 = kreis2res[5]
     kreisNr = 3
-    let ___tempvar11 = kreisSteuerung(kreisNr, eaK3InputPin, einK3, einK3changed, vrK3InputPin, vorK3, vorK3changed, vorK3OutputPin, uK3InputPin, uSollK3, uIstK3, uK3OutputPin, sendRequest)
-    einK3 = ___tempvar11[0]
-    einK3changed = ___tempvar11[1]
-    vorK3 = ___tempvar11[2]
-    vorK3changed = ___tempvar11[3]
-    uSollK3 = ___tempvar11[4]
-    uIstK3 = ___tempvar11[5]
+    let kreis3res = kreisSteuerung(kreisNr, eaK3InputPin, einK3, einK3changed, vrK3InputPin, vorK3, vorK3changed, vorK3OutputPin, uK3InputPin, uSollK3, uIstK3, uK3OutputPin, sendRequest)
+    einK3 = kreis3res[0]
+    einK3changed = kreis3res[1]
+    vorK3 = kreis3res[2]
+    vorK3changed = kreis3res[3]
+    uSollK3 = kreis3res[4]
+    uIstK3 = kreis3res[5]
     sendData()
     //  -------------
     // if nr >= 100:
