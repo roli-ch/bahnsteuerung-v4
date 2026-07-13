@@ -38,7 +38,7 @@ val = 255 - bitwert
 MCP23017.writeRegister(addr, reg, bitwert)
 console.log("Bank A auf Input setzen: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
 
-// Bank A auf PullDown setzen
+// Bank A auf PullUp setzen > alle Bits werden gesetzt
 reg = REG_MCP.PullUp_Widerstaende_A
 bitwert = BITS.Alle
 val = bitwert
@@ -61,6 +61,7 @@ val = BITS.keiner
 //val = BITS.Bit1
 MCP23017.writeRegister(addr, reg, val)
 console.log("Bank B schreiben: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
+
 
 /*
 pause(1000)
@@ -117,14 +118,14 @@ let vorK3OutputPin = DigitalPin.P16
 */
 
 let eaK1InputPin = 0
-let eaK2InputPin = 0
-let eaK3InputPin = 0
-let vrK1InputPin = 0
-let vrK2InputPin = 0
-let vrK3InputPin = 0
+let eaK2InputPin = 2
+let eaK3InputPin = 4
+let vrK1InputPin = 1
+let vrK2InputPin = 3
+let vrK3InputPin = 5
 let vorK1OutputPin = 0
-let vorK2OutputPin = 0
-let vorK3OutputPin = 0
+let vorK2OutputPin = 1
+let vorK3OutputPin = 2
 
 let rampGradient = 10       //  %/sec
 let rampUmin = 10           //  %
@@ -263,7 +264,6 @@ input.onPinPressed(TouchPin.P0, function on_pin_pressed_p0() {
 //  ===================================
 //  Daten senden
 function sendData() {
-    
     if (sendRequest == 1) {
         //  Senden
         radio.sendNumber(1)
@@ -454,13 +454,13 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             uIst = uRampOnOff(false, uSoll, uIst, uOutputPin)
             // uIst = uRampOnOffLoc(False)
             console.log("Umschalten Vor: " + vor)
-            pins.digitalWritePin(vorOutputPin, vor)
+            MCP23017.WritePin(addr, REG_MCP.RegAddr_B, vorOutputPin, vor)
             console.log("U ramp up")
             uIst = uRampOnOff(true, uSoll, uIst, uOutputPin)
         } else {
             // uIst = uRampOnOffLoc(True)
             console.log("Umschalten Vor: " + vor)
-            pins.digitalWritePin(vorOutputPin, vor)
+            MCP23017.WritePin(addr, REG_MCP.RegAddr_B, vorOutputPin, vor)
             uIst = 0
         }
         return uIst
@@ -472,12 +472,12 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
     if (debugSteu) {
         console.log("**** kreisSteuerung: ein:" + ein + "; changeEin:" + einChanged)
     }
-    if (pins.digitalReadPin(eaInputPin)) {
+    if (!MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, eaInputPin)) {
+        //if (pins.digitalReadPin(eaInputPin)) {
         if (debugSteu) {
             console.log("------------------------------------")
             console.log("Check Richtungswechsel: ein= " + ein + "; einChanged= " + einChanged)
-        }
-        
+        }  
         if (!einChanged) {
             if (ein) {
                 ein = 0
@@ -486,7 +486,6 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
                 ein = 1
                 console.log("Kreis" + kreisNr + " Einschalten; uIst:" + round(uIst, 1))
             }
-            
             // uSollchanged = 1
             sendRequest = kreisNr
             einChanged = 1
@@ -507,7 +506,8 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
     
     //  ------------------------------
     //  Check Richtungswechsel
-    if (pins.digitalReadPin(vrInputPin)) {
+    if (!MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, vrInputPin)) {
+        //if (pins.digitalReadPin(vrInputPin)) {
         if (debugSteu) {
             console.log("------------------------------------")
             console.log("Check Richtungswechsel: vor= " + vor + "; vorChanged= " + vorChanged)
@@ -662,13 +662,14 @@ basic.forever(function on_forever() {
     // basic.pause(500)
 
     // lese RegA und schreibe auf RegB
-    bitwert = MCP23017.readRegister(addr, REG_MCP.RegAddr_A)
+    //bitwert = MCP23017.readRegister(addr, REG_MCP.RegAddr_A)
     //pause(1000)
     /*
     console.log("** bitwert gelesen: " + bitwert)
     MCP23017.writeRegister(addr, REG_MCP.RegAddr_B, bitwert)
     console.log("** bitwert geschrieben: " + bitwert)
     */
+    /*
     if (bitwert != last_bitwert) {
         console.log("--------------")
         console.log("Loop: " + input.runningTime() / 1000)
@@ -682,10 +683,14 @@ basic.forever(function on_forever() {
         //MCP23017.writeRegister(addr, REG_MCP.RegAddr_B, bitwert)
         //console.log("** bitwert geschrieben: " + bitwert)
         //showBits(bitwert)
-        let pin0 = ! MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, 0)
-        let pin1 = ! MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, 1)
-        console.log("pin0: "+pin0+" pin1: "+pin1)
+        for (let i = 0; i < 8; i++) {
+            let pin = !MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, i)
+            if (pin) {
+                console.log("pin" + i + " : " + pin)
+            }
+        }
     }
+    */
     basic.pause(100)
 })
 // marke
