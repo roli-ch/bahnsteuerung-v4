@@ -24,7 +24,7 @@ let uK3OutputPin = AnalogPin.P10
 //  GroundPin für pwm wird erst nach initialisierung des microbits eingeschaltet
 //  gndOutPin = DigitalPin.P11
 //  pins.digital_write_pin(gndOutPin, 0)
-pins.analogWritePin(uK1OutputPin, 100)
+pins.analogWritePin(uK1OutputPin, 0)
 pins.analogWritePin(uK2OutputPin, 0)
 pins.analogWritePin(uK3OutputPin, 0)
 // pause(5000)
@@ -43,33 +43,24 @@ pins.setPull(vrK3InputPin, PinPullMode.PullDown)
 let vorK1OutputPin = DigitalPin.P14
 let vorK2OutputPin = DigitalPin.P15
 let vorK3OutputPin = DigitalPin.P16
-let rampGradient = 10
-//  % / sec
-let rampUmin = 10
-//  %
-let uMax = 100
-//  %
-let uNomV = 12
-//  V
-let base_loop = 1000
-//  1s
-let log_loop = 1000 * 60
-//  1  Min.
+
+let rampGradient = 10       //  %/sec
+let rampUmin = 10           //  %
+let uMax = 100              //  %
+let uNomV = 12              //  V
+let base_loop = 1000        //  1s
+let log_loop = 1000 * 60    //  1  Min.
+
 //  Init Variablen
 //  =========================
 let loopNr = 0
 led.enable(false)
-let rTime = input.runningTime()
-//  ms
-let dTime = 0
-//  ms
-let loopTime = 0
-//  ms
+let rTime = input.runningTime() //  ms
+let dTime = 0                   //  ms
+let loopTime = 0                //  ms
 let zoom = false
-let u_pwm = 100
-//  0..100%
-let uBoard = 0
-//  U board in V
+let u_pwm = 100                 //  0..100%
+let uBoard = 0                  //  U board in V
 let uBoardRoh = 0
 let remChanged = 0
 let kreisNr = 0
@@ -78,7 +69,7 @@ let kreisNr = 0
 // ------------
 let einK1 = 0
 //  K1 ist aktiv
-let vorK1 = 1
+let vorK1 = 0
 let vorK1changed = 0
 let einK1changed = 0
 let uSollK1 = 0
@@ -89,31 +80,35 @@ let uIstK1 = 0
 // ------------
 let einK2 = 0
 //  K2 ist aktiv
-let vorK2 = 1
+let vorK2 = 0
 let vorK2changed = 0
 let einK2changed = 0
 let uSollK2 = 0
 //  0-100% aktueller Sollwert (Potentiometer)
 let uIstK2 = 0
 
+/*
+let eaK2 = 0
+einK2 = 0
+let vrK2 = 0
+let remChangedK2 = 0
+let remChangedVrK2 = 0
+let rem_uSollK2 = 0
+let remChangedUsollK2 = 0
+*/
+
 //  Kreis 3
 // ------------
 let einK3 = 0
 //  K3 ist aktiv
-let vorK3 = 1
+let vorK3 = 0
 let vorK3changed = 0
 let einK3changed = 0
 let uSollK3 = 0
 //  0-100% aktueller Sollwert (Potentiometer)
 let uIstK3 = 0
-let eaK2 = 0
-einK2 = 0
-let vrK2 = 0
-vorK2 = 0
-let remChangedK2 = 0
-let remChangedVrK2 = 0
-let rem_uSollK2 = 0
-let remChangedUsollK2 = 0
+
+/*
 let eaK3 = 0
 einK3 = 0
 let vrK3 = 0
@@ -122,6 +117,8 @@ let remChangedK3 = 0
 let remChangedVrK3 = 0
 let rem_uSollK3 = 0
 let remChangedUsollK3 = 0
+*/
+
 let stop = 0
 //  alle Kreise stop
 let test = false
@@ -514,6 +511,7 @@ basic.forever(function on_forever() {
     if (debugSteu) {
         console.log("call kreisSteuerung: einK1: " + einK1)
     }
+    //console.log("*0 vorK1 " + vorK1)
     let kreis1res = kreisSteuerung(kreisNr, eaK1InputPin, einK1, einK1changed, vrK1InputPin, vorK1, vorK1changed, vorK1OutputPin, uK1InputPin, uSollK1, uIstK1, uK1OutputPin, sendRequest)
     einK1 = kreis1res[0]
     einK1changed = kreis1res[1]
@@ -521,8 +519,10 @@ basic.forever(function on_forever() {
     vorK1changed = kreis1res[3]
     uSollK1 = kreis1res[4]
     uIstK1 = kreis1res[5]
-    //                                                                            kreisNr, eaInputPin,  ein, einChanged,     vrInputPin, vor,      vorChanged, vorOutputPin,    uInputPin,   uSoll,   uIst, uOutputPin,     sendRequest
+    //console.log("*1 vorK1 " + kreis1res[2])
+
     kreisNr = 2
+    //console.log("*0 vorK2 " + vorK2)
     let kreis2res = kreisSteuerung(kreisNr, eaK2InputPin, einK2, einK2changed, vrK2InputPin, vorK2, vorK2changed, vorK2OutputPin, uK2InputPin, uSollK2, uIstK2, uK2OutputPin, sendRequest)
     einK2 = kreis2res[0]
     einK2changed = kreis2res[1]
@@ -530,7 +530,10 @@ basic.forever(function on_forever() {
     vorK2changed = kreis2res[3]
     uSollK2 = kreis2res[4]
     uIstK2 = kreis2res[5]
+    //console.log("* vorK2 " + kreis2res[2])
+
     kreisNr = 3
+    //console.log("*0 vorK3 " + vorK3)
     let kreis3res = kreisSteuerung(kreisNr, eaK3InputPin, einK3, einK3changed, vrK3InputPin, vorK3, vorK3changed, vorK3OutputPin, uK3InputPin, uSollK3, uIstK3, uK3OutputPin, sendRequest)
     einK3 = kreis3res[0]
     einK3changed = kreis3res[1]
@@ -538,6 +541,8 @@ basic.forever(function on_forever() {
     vorK3changed = kreis3res[3]
     uSollK3 = kreis3res[4]
     uIstK3 = kreis3res[5]
+    //console.log("* vorK3 " + kreis3res[2])
+
     sendData()
     //  -------------
     // if nr >= 100:
@@ -552,5 +557,5 @@ basic.forever(function on_forever() {
     // u_out_roh_max = 0
     // basic.pause(base_loop)
     // basic.pause(500)
-    basic.pause(200)
+    basic.pause(100)
 })
