@@ -4,7 +4,9 @@
     "dependencies": {
         "core": "*",
         "radio": "*",
-        "microphone": "*"
+        "microphone": "*",
+        "RB-TFT1.8": "github:roli-ch/pxt-rb-tft1.8-v1#main",
+        "pxt-mcp23017-v1": "github:roli-ch/pxt-mcp23017-v1#master"
     },
     "files": [
         "main.blocks",

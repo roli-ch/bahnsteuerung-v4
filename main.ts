@@ -9,6 +9,63 @@
 //  - Basis Steuermodul erstellt und Hauptmodul für 3 Steuerungen erstellt
 
 //  =====================================
+//  Init TFT Display
+//  =========================
+console.log("Initialize TFT Display")
+
+RBTFT18.init(DigitalPin.P8, DigitalPin.P16)
+
+// Clear screen - replaces whole screen with a black rectangle
+RBTFT18.clearScreen()
+RBTFT18.showString("RB-TFT1.8 bereit", 10, 10, 1, Color.White, Color.Black)
+
+//  Init MCP23017
+//  =========================
+console.log("--------------")
+console.log("Init MCP23017")
+let addr = ADDRESS.A27
+//let addr = ADDRESS.A20
+
+let val = 0
+let reg = 0
+let bitwert = 0
+
+// Bank A auf Input setzen
+reg = REG_MCP.EinOderAusgabe_A
+bitwert = BITS.Alle
+val = 255 - bitwert
+MCP23017.writeRegister(addr, reg, bitwert)
+console.log("Bank A auf Input setzen: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
+
+// Bank A auf PullDown setzen
+reg = REG_MCP.PullUp_Widerstaende_A
+bitwert = BITS.keiner
+val = bitwert
+MCP23017.writeRegister(addr, reg, val) // 0x0C
+console.log("Bank A auf Pullup setzen: writeRegister: addr:" + addr + "; reg: " + reg + "; val: " + val)
+pause(1000)
+
+// Bank B auf Output setzen
+addr = ADDRESS.A27
+reg = REG_MCP.EinOderAusgabe_B
+val = BITS.keiner
+MCP23017.writeRegister(addr, reg, val)      //Register stehen standardmäßig auf Eingabe (1111 1111)
+console.log("Bank B auf Output setzen: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
+pause(1000)
+
+// Bank B schreiben auf 0
+addr = ADDRESS.A27
+reg = REG_MCP.RegAddr_B
+val = BITS.keiner
+//val = BITS.Bit1
+MCP23017.writeRegister(addr, reg, val)
+console.log("Bank B schreiben: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
+pause(1000)
+
+console.log("Init OK")
+console.log("--------------")
+
+
 //  Init Konstanten
 //  =========================
 let debugRamp = 0
@@ -27,6 +84,7 @@ let uK3OutputPin = AnalogPin.P10
 pins.analogWritePin(uK1OutputPin, 0)
 pins.analogWritePin(uK2OutputPin, 0)
 pins.analogWritePin(uK3OutputPin, 0)
+/*
 // pause(5000)
 let eaK1InputPin = DigitalPin.P6
 pins.setPull(eaK1InputPin, PinPullMode.PullDown)
@@ -43,6 +101,17 @@ pins.setPull(vrK3InputPin, PinPullMode.PullDown)
 let vorK1OutputPin = DigitalPin.P14
 let vorK2OutputPin = DigitalPin.P15
 let vorK3OutputPin = DigitalPin.P16
+*/
+
+let eaK1InputPin = 0
+let eaK2InputPin = 0
+let eaK3InputPin = 0
+let vrK1InputPin = 0
+let vrK2InputPin = 0
+let vrK3InputPin = 0
+let vorK1OutputPin = 0
+let vorK2OutputPin = 0
+let vorK3OutputPin = 0
 
 let rampGradient = 10       //  %/sec
 let rampUmin = 10           //  %
