@@ -9,10 +9,9 @@
 //  - Basis Steuermodul erstellt und Hauptmodul für 3 Steuerungen erstellt
 
 //  =====================================
-//  Init TFT Display
+//  Init TFT Display 130 x 162
 //  =========================
 console.log("Initialize TFT Display")
-
 RBTFT18.init(DigitalPin.P8, DigitalPin.P16)
 
 // Clear screen - replaces whole screen with a black rectangle
@@ -392,6 +391,82 @@ function showData() {
     }
 }
 
+//  -------------------------
+function showInfoTFT() {
+    //  Zeigt Info auf dem TFT-Display
+    let posX = 10
+    let posY = 10
+    let diffX = 30
+    let diffY = 10
+    let infoStr = "                         "
+    //console.log("InfoTFT")
+    RBTFT18.showString("Show Info                ", posX, posY, 1, Color.White, Color.Black)
+    posY += diffY
+    infoStr = "-----------"
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+
+    infoStr = "Kreis:"
+    posY += diffY
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "K1"
+    posX += 60
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "K2"
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "K3"
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+
+    infoStr = "Speed: [%]"
+    posX = 10
+    posY += diffY
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = ""+ round(uSollK1,0)
+    posX += 55
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + round(uSollK2,0)
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + round(uSollK3,0)
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+
+    infoStr = "Direction: "
+    posX = 10
+    posY += diffY
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + vorK1
+    posX += 55
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + vorK2
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + vorK3
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+
+
+    infoStr = "Ein:       "
+    posX = 10
+    posY += diffY
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + einK1
+    posX += 55
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + einK2
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+    infoStr = "" + einK3
+    posX += 20
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+
+    infoStr = "Remote Ctrl: "+ remCtrl
+    posX = 10
+    posY += diffY
+    RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
+}
+
 // serial.write_value("UOut", uOut)
 function showInfo() {
     console.log("======================")
@@ -668,6 +743,8 @@ basic.forever(function on_forever() {
         // showInfo()
         dTime = 0
     }
+
+    showInfoTFT()
     
     // u_in_roh_max = 0
     // u_out_roh_max = 0
