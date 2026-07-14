@@ -61,7 +61,8 @@ val = BITS.keiner
 //val = BITS.Bit1
 MCP23017.writeRegister(addr, reg, val)
 console.log("Bank B schreiben: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
-
+MCP23017.debugR = 0
+MCP23017.debugW = 0
 
 /*
 pause(1000)
