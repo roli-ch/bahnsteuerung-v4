@@ -218,6 +218,7 @@ let remCtrl = 0
 
 console.log(" Bahnsteuerung Init")
 showInfo()
+showInfoTFT()
 console.log(" vvvvvvvvvvvvvvvvvvvvv")
 pause(2000)
 
@@ -277,6 +278,7 @@ function sendData() {
         radio.sendValue("uIstK1", uIstK1)
         sendRequest = 0
         console.log("K1 Daten gesendet")
+        showInfoTFT()
     }
     if (sendRequest == 2) {
         //  Senden
@@ -286,6 +288,7 @@ function sendData() {
         radio.sendValue("uIstK2", uIstK2)
         sendRequest = 0
         console.log("K2 Daten gesendet")
+        showInfoTFT()
     }
     if (sendRequest == 3) {
         //  Senden
@@ -294,7 +297,8 @@ function sendData() {
         radio.sendValue("vorK3", vorK3)
         radio.sendValue("uIstK3", uIstK3)
         sendRequest = 0
-        console.log("K3 Daten gesendet")
+        console.log("K3 Daten gesendet")       
+        showInfoTFT()
     }
 }
 
@@ -612,6 +616,7 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             console.log("Richtungswechsel lokal")
             uIst = richtungswechsel(uIst)
             vorChanged = 1
+            sendRequest = kreisNr
         }
         if (debugSteu) {
             console.log("Check Richtungswechsel: vor= " + vor + "; vorChanged= " + vorChanged)
@@ -743,44 +748,6 @@ basic.forever(function on_forever() {
         // showInfo()
         dTime = 0
     }
-
-    showInfoTFT()
-    
-    // u_in_roh_max = 0
-    // u_out_roh_max = 0
-    // basic.pause(base_loop)
-    // basic.pause(500)
-
-    // lese RegA und schreibe auf RegB
-    //bitwert = MCP23017.readRegister(addr, REG_MCP.RegAddr_A)
-    //pause(1000)
-    /*
-    console.log("** bitwert gelesen: " + bitwert)
-    MCP23017.writeRegister(addr, REG_MCP.RegAddr_B, bitwert)
-    console.log("** bitwert geschrieben: " + bitwert)
-    */
-    /*
-    if (bitwert != last_bitwert) {
-        console.log("--------------")
-        console.log("Loop: " + input.runningTime() / 1000)
-        console.log("** bitwert gelesen: " + bitwert)
-        showBits(bitwert)
-        last_bitwert = bitwert
-        basic.pause(100)
-        if (bitwert < 0) {
-            bitwert = bitwert + 256
-        }
-        //MCP23017.writeRegister(addr, REG_MCP.RegAddr_B, bitwert)
-        //console.log("** bitwert geschrieben: " + bitwert)
-        //showBits(bitwert)
-        for (let i = 0; i < 8; i++) {
-            let pin = !MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, i)
-            if (pin) {
-                console.log("pin" + i + " : " + pin)
-            }
-        }
-    }
-    */
     basic.pause(100)
 })
 // marke
