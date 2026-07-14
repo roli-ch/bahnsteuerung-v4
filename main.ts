@@ -459,12 +459,16 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             // uIst = uRampOnOffLoc(False)
             console.log("Umschalten Vor: " + vor)
             MCP23017.WritePin(addr, REG_MCP.RegAddr_B, vorOutputPin, vor)
+            console.log("addr: " + addr + " reg: " + REG_MCP.RegAddr_B + " vorK1OutputPin: " + vorOutputPin + " Vor: " + vor)
             console.log("U ramp up")
             uIst = uRampOnOff(true, uSoll, uIst, uOutputPin)
         } else {
             // uIst = uRampOnOffLoc(True)
             console.log("Umschalten Vor: " + vor)
             MCP23017.WritePin(addr, REG_MCP.RegAddr_B, vorOutputPin, vor)
+            console.log("addr: " + addr + " reg: " + REG_MCP.RegAddr_B + " vorK1OutputPin: " + vorOutputPin + " Vor: " + vor)
+            let bw = MCP23017.readRegister(addr, REG_MCP.RegAddr_B)
+            console.log("bitwert: "+bw)
             uIst = 0
         }
         return uIst
@@ -476,7 +480,7 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
     if (debugSteu) {
         console.log("**** kreisSteuerung: ein:" + ein + "; changeEin:" + einChanged)
     }
-    if (!MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, eaInputPin)) {
+    if (MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, eaInputPin)) {
         //if (pins.digitalReadPin(eaInputPin)) {
         if (debugSteu) {
             console.log("------------------------------------")
@@ -485,9 +489,11 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
         if (!einChanged) {
             if (ein) {
                 ein = 0
+                console.log("---------------------------------")
                 console.log("Kreis" + kreisNr + " Ausschalten; uIst:" + round(uIst, 1))
             } else {
                 ein = 1
+                console.log("---------------------------------")
                 console.log("Kreis" + kreisNr + " Einschalten; uIst:" + round(uIst, 1))
             }
             // uSollchanged = 1
@@ -510,7 +516,7 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
     
     //  ------------------------------
     //  Check Richtungswechsel
-    if (!MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, vrInputPin)) {
+    if (MCP23017.ReadPin(addr, REG_MCP.RegAddr_A, vrInputPin)) {
         //if (pins.digitalReadPin(vrInputPin)) {
         if (debugSteu) {
             console.log("------------------------------------")
@@ -520,9 +526,11 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
         if (!vorChanged) {
             if (vor) {
                 vor = 0
+                console.log("---------------------------------")
                 console.log("Kreis" + kreisNr + " Retour; uIst:" + round(uIst, 1))
             } else {
                 vor = 1
+                console.log("---------------------------------")
                 console.log("Kreis" + kreisNr + " Vor; uIst:" + round(uIst, 1))
             }
             console.log("Richtungswechsel lokal")
@@ -695,6 +703,6 @@ basic.forever(function on_forever() {
         }
     }
     */
-    basic.pause(1000)
+    basic.pause(100)
 })
 // marke
