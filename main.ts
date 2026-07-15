@@ -219,6 +219,7 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
     let bitwert = MCP23017.readRegister(addr,REG_MCP.RegAddr_B)
     console.log("addr "+addr+" reg "+reg+" bitwert: "+bitwert)
     showInfo()
+    showInfoTFT()
 })
 input.onButtonPressed(Button.B, function on_button_pressed_b() { 
     //  stop Kreis 1-3
@@ -246,10 +247,6 @@ input.onButtonPressed(Button.AB, function on_button_pressed_ab() {
     sendData()
     sendRequest = 3
     sendData()
-})
-
-input.onPinPressed(TouchPin.P0, function on_pin_pressed_p0() {
-    console.log("P0")
 })
 
 //  Funk
@@ -391,7 +388,8 @@ function showInfoTFT() {
     let diffY = 10
     let infoStr = "                         "
     //console.log("InfoTFT")
-    RBTFT18.showString("Show Info                ", posX, posY, 1, Color.White, Color.Black)
+
+    RBTFT18.showString("Show Info                ", posX, posY, 1, Color.White, Color.Blue)
     posY += diffY
     infoStr = "-----------"
     RBTFT18.showString(infoStr, posX, posY, 1, Color.White, Color.Black)
@@ -726,6 +724,10 @@ basic.forever(function on_forever() {
     uSollK3 = kreis3res[4]
     uIstK3 = kreis3res[5]
     //console.log("* vorK3 " + kreis3res[2])
+    if (input.logoIsPressed()) {
+        console.log("logoIsPressed")
+        RBTFT18.clearScreen()
+    }
 
     sendData()
     //  -------------
