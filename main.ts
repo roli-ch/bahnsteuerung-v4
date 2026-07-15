@@ -15,7 +15,7 @@ console.log("Initialize TFT Display")
 RBTFT18.init(DigitalPin.P8, DigitalPin.P16)
 
 // Clear screen - replaces whole screen with a black rectangle
-RBTFT18.clearScreen()
+//RBTFT18.clearScreen()
 RBTFT18.showString("RB-TFT1.8 bereit", 10, 10, 1, Color.White, Color.Black)
 
 //  Init MCP23017
@@ -43,7 +43,7 @@ bitwert = BITS.Alle
 val = bitwert
 MCP23017.writeRegister(addr, reg, val) // 0x0C
 console.log("Bank A auf Pullup setzen: writeRegister: addr:" + addr + "; reg: " + reg + "; val: " + val)
-pause(1000)
+pause(100)
 
 // Bank B auf Output setzen
 addr = ADDRESS.A27
@@ -51,7 +51,7 @@ reg = REG_MCP.EinOderAusgabe_B
 val = BITS.keiner
 MCP23017.writeRegister(addr, reg, val)      //Register stehen standardmäßig auf Eingabe (1111 1111)
 console.log("Bank B auf Output setzen: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
-pause(1000)
+pause(100)
 
 // Bank B schreiben auf 0
 addr = ADDRESS.A27
@@ -62,19 +62,6 @@ MCP23017.writeRegister(addr, reg, val)
 console.log("Bank B schreiben: writeRegister: addr: " + addr + "; reg: " + reg + "; val: " + val)
 MCP23017.debugR = 0
 MCP23017.debugW = 0
-
-/*
-pause(1000)
-MCP23017.WritePin(addr, reg, 0, 1)
-pause(1000)
-MCP23017.WritePin(addr, reg, 1, 1)
-pause(1000)
-MCP23017.WritePin(addr, reg, 2, 1)
-pause(1000)
-MCP23017.WritePin(addr, reg, 3, 1)
-pause(1000)
-MCP23017.writeRegister(addr, reg, 0)
-*/
 
 console.log("Init OK")
 console.log("--------------")
@@ -220,7 +207,7 @@ console.log(" Bahnsteuerung Init")
 showInfo()
 showInfoTFT()
 console.log(" vvvvvvvvvvvvvvvvvvvvv")
-pause(2000)
+pause(100)
 
 //  Buttons
 //  =========================
@@ -228,7 +215,7 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
     console.log("============")
     console.log("Button A")
     MCP23017.WritePin(addr, REG_MCP.RegAddr_B, 2, 0)
-    pause(1000)
+    pause(100)
     let bitwert = MCP23017.readRegister(addr,REG_MCP.RegAddr_B)
     console.log("addr "+addr+" reg "+reg+" bitwert: "+bitwert)
     showInfo()
@@ -477,7 +464,7 @@ function showInfo() {
     console.log("Show Info")
     console.log("-----------------")
     console.log("loopNr: " + ("" + loopNr) + "; loopTime: " + loopTime + " ms; time: " + ("" + rTime / 1000) + " s")
-    console.log("Stop: " + stop + "; remote control: " + remCtrl)
+    console.log("Stop: " + stop + "; remote control: " + remCtrl+ " sendRequest: "+sendRequest)
     console.log("-----------------")
     console.log("Kreis 1: ein = " + einK1 + "; vor = " + vorK1 + "; einK1changed = " + einK1changed + "; vorK1changed = " + vorK1changed)
     console.log("Kreis 1: U soll = " + round(uSollK1, 1) + " %; U ist = " + round(uIstK1, 1) + " % ; " + round(uIstK1 / 100 * uNomV, 1) + " V")
@@ -526,7 +513,7 @@ function uRampOnOff(up: boolean, uSoll: number, uIst: number, uOutputPin: number
     return uIst
 }
 
-function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einChanged: number, vrInputPin: number, vor: number, vorChanged: number, vorOutputPin: number, uInputPin: number, uSoll: number, uIst: number, uOutputPin: number, sendRequest: number): number[] {
+function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einChanged: number, vrInputPin: number, vor: number, vorChanged: number, vorOutputPin: number, uInputPin: number, uSoll: number, uIst: number, uOutputPin: number): number[] {
     let uSollPoti: number;
     let diff_u: number;
     
@@ -578,6 +565,7 @@ function kreisSteuerung(kreisNr: number, eaInputPin: number, ein: number, einCha
             }
             // uSollchanged = 1
             sendRequest = kreisNr
+            //console.log("sendRequest: "+sendRequest)
             einChanged = 1
         }
         if (debugSteu) {
@@ -708,7 +696,7 @@ basic.forever(function on_forever() {
         console.log("call kreisSteuerung: einK1: " + einK1)
     }
     //console.log("*0 vorK1 " + vorK1)
-    let kreis1res = kreisSteuerung(kreisNr, eaK1InputPin, einK1, einK1changed, vrK1InputPin, vorK1, vorK1changed, vorK1OutputPin, uK1InputPin, uSollK1, uIstK1, uK1OutputPin, sendRequest)
+    let kreis1res = kreisSteuerung(kreisNr, eaK1InputPin, einK1, einK1changed, vrK1InputPin, vorK1, vorK1changed, vorK1OutputPin, uK1InputPin, uSollK1, uIstK1, uK1OutputPin)
     einK1 = kreis1res[0]
     einK1changed = kreis1res[1]
     vorK1 = kreis1res[2]
@@ -719,7 +707,7 @@ basic.forever(function on_forever() {
 
     kreisNr = 2
     //console.log("*0 vorK2 " + vorK2)
-    let kreis2res = kreisSteuerung(kreisNr, eaK2InputPin, einK2, einK2changed, vrK2InputPin, vorK2, vorK2changed, vorK2OutputPin, uK2InputPin, uSollK2, uIstK2, uK2OutputPin, sendRequest)
+    let kreis2res = kreisSteuerung(kreisNr, eaK2InputPin, einK2, einK2changed, vrK2InputPin, vorK2, vorK2changed, vorK2OutputPin, uK2InputPin, uSollK2, uIstK2, uK2OutputPin)
     einK2 = kreis2res[0]
     einK2changed = kreis2res[1]
     vorK2 = kreis2res[2]
@@ -730,7 +718,7 @@ basic.forever(function on_forever() {
 
     kreisNr = 3
     //console.log("*0 vorK3 " + vorK3)
-    let kreis3res = kreisSteuerung(kreisNr, eaK3InputPin, einK3, einK3changed, vrK3InputPin, vorK3, vorK3changed, vorK3OutputPin, uK3InputPin, uSollK3, uIstK3, uK3OutputPin, sendRequest)
+    let kreis3res = kreisSteuerung(kreisNr, eaK3InputPin, einK3, einK3changed, vrK3InputPin, vorK3, vorK3changed, vorK3OutputPin, uK3InputPin, uSollK3, uIstK3, uK3OutputPin)
     einK3 = kreis3res[0]
     einK3changed = kreis3res[1]
     vorK3 = kreis3res[2]
